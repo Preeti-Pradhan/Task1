@@ -1,43 +1,67 @@
-var firebaseConfig = {
+   // Your web app's Firebase configuration
+      var firebaseConfig = {
         // Paste your Config Code
-		apiKey: "AIzaSyCnPgNzXH_hkTkTeSdfQXJFCrj-G23aHYs",
-    		authDomain: "tf-firebase-demo-78ccd.firebaseapp.com",
-		databaseURL: "https://tf-firebase-demo-78ccd.firebaseio.com",
-    		projectId: "tf-firebase-demo-78ccd",
-    		storageBucket: "tf-firebase-demo-78ccd.appspot.com",
-    		messagingSenderId: "61525865576",
-    		appId: "1:61525865576:web:b61a59a3814f9a6b56b7dd"
+	  apiKey: "AIzaSyBqOEdoAxtusJvtzR8wAykPm62oMpJkznU",
+    authDomain: "task1-3c20e.firebaseapp.com",
+   databaseURL: "https://task1-3c20e.firebaseio.com",
+    projectId: "task1-3c20e",
+    storageBucket: "task1-3c20e.appspot.com",
+    messagingSenderId: "769714458335",
+    appId: "1:769714458335:web:1369c1f8da51f83783e36a"     
+	      
       };
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
 
+      document.getElementById('dashboard').style.display="none"
 
-var provider = new firebase.auth.GoogleAuthProvider();
+      document.getElementById('login').addEventListener('click', GoogleLogin)
+      document.getElementById('logout').addEventListener('click', LogoutUser)
 
-function googleSignin() {
-   firebase.auth()
-   
-   .signInWithPopup(provider).then(function(result) {
-      var token = result.credential.accessToken;
-      var user = result.user;
-		
-      console.log(token)
-      console.log(user)
-   }).catch(function(error) {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-		
-      console.log(error.code)
-      console.log(error.message)
-   });
-}
+      let provider = new firebase.auth.GoogleAuthProvider()
 
-function googleSignout() {
-   firebase.auth().signOut()
-	
-   .then(function() {
-      console.log('Signout Succesfull')
-   }, function(error) {
-      console.log('Signout Failed')  
-   });
-}
+      function GoogleLogin(){
+        console.log('Login Btn Call')
+        firebase.auth().signInWithPopup(provider).then(res=>{
+          console.log(res.user)
+          document.getElementById('LoginScreen').style.display="none"
+          document.getElementById('dashboard').style.display="block"
+          showUserDetails(res.user)
+        }).catch(e=>{
+          console.log(e)
+        })
+      }
+
+      function showUserDetails(user){
+        document.getElementById('userDetails').innerHTML = `
+          <img src="${user.photoURL}" style="width:10%">
+          <p>Name: ${user.displayName}</p>
+          <p>Email: ${user.email}</p>
+        `
+      }
+
+      function checkAuthState(){
+        firebase.auth().onAuthStateChanged(user=>{
+          if(user){
+            document.getElementById('LoginScreen').style.display="none"
+            document.getElementById('dashboard').style.display="block"
+            showUserDetails(user)
+          }else{
+
+          }
+        })
+      }
+
+      function LogoutUser(){
+        console.log('Logout Btn Call')
+        firebase.auth().signOut().then(()=>{
+          document.getElementById('LoginScreen').style.display="block"
+          document.getElementById('dashboard').style.display="none"
+        }).catch(e=>{
+          console.log(e)
+        })
+      }
+      checkAuthState()
+
+
+
